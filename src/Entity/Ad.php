@@ -3,7 +3,12 @@
 namespace App\Entity;
 
 use App\Repository\AdRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Doctrine\DBAL\Schema\Constraint as Assert;
+
 
 /**
  * @ORM\Entity(repositoryClass=AdRepository::class)
@@ -52,9 +57,45 @@ class Ad
      */
     private $tags;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="ads")
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Contact::class, mappedBy="ads")
+     */
+    private $contacts;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $assets;
+
+    public function __construct()
+    {
+        $this->contacts = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    /**
+     * @param mixed $id
+     */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @param mixed $contacts
+     */
+    public function setContacts($contacts): void
+    {
+        $this->contacts = $contacts;
     }
 
     public function getTitle(): ?string
@@ -137,6 +178,58 @@ class Ad
     public function setTags(?string $tags): self
     {
         $this->tags = $tags;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Contact[]
+     */
+    public function getContacts(): Collection
+    {
+        return $this->contacts;
+    }
+
+    public function addContact(Contact $contact): self
+    {
+        if (!$this->contacts->contains($contact)) {
+            $this->contacts[] = $contact;
+            $contact->addAd($this);
+        }
+
+        return $this;
+    }
+
+    public function removeContact(Contact $contact): self
+    {
+        if ($this->contacts->contains($contact)) {
+            $this->contacts->removeElement($contact);
+            $contact->removeAd($this);
+        }
+
+        return $this;
+    }
+
+    public function getAssets(): ?string
+    {
+        return $this->assets;
+    }
+
+    public function setAssets(?string $assets): self
+    {
+        $this->assets = $assets;
 
         return $this;
     }

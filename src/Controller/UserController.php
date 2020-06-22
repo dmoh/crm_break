@@ -10,6 +10,19 @@ use Symfony\Component\HttpFoundation\Response;
 
 class UserController extends AbstractController
 {
+    private $headers = array();
+    public function __construct()
+    {
+        $this->headers = [
+            'Access-Control-Allow-Origin' => '*',
+            'Allow' => 'GET, POST, HEAD, OPTIONS'
+            /*,
+            'Access-Control-Request-Method' => 'POST, GET, OPTIONS',
+            'Access-Control-Request-Headers' =>'Origin, Content-Type, Accept',
+            'Access-Control-Allow-Credentials' => 'true'*/
+        ]; // TODO ATTENTION LORS DU DEPLOIEMENT !!!!
+    }
+
     /**
      * @Route("/user", name="user")
      */
@@ -33,7 +46,7 @@ class UserController extends AbstractController
         $customers = $entityManager->getRepository(User::class)->findAll();
 
 
-
+        // $response->headers->set('Access-Control-Allow-Origin', '*');
 
         foreach ($customers as $customer) {
             $data[] = [
@@ -45,6 +58,8 @@ class UserController extends AbstractController
             ];
         }
 
-        return new JsonResponse($data, Response::HTTP_OK);
+        return new JsonResponse($data, Response::HTTP_OK, $this->headers);
     }
+
+
 }
