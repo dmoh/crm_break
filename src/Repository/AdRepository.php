@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Ad;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query;
 
 /**
  * @method Ad|null find($id, $lockMode = null, $lockVersion = null)
@@ -36,6 +37,38 @@ class AdRepository extends ServiceEntityRepository
     }
     */
 
+    //public function find
+
+
+    public function findAllArrayAd(){
+        return $this->createQueryBuilder('a')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
+    }
+
+
+    private function transform(Ad $ad)
+    {
+        return [
+            'id'    => (int) $ad->getId(),
+            'title' => (string) $ad->getTitle(),
+            'amount' => (int) $ad->getAmount(),
+            'tags' => (int) $ad->getTags(),
+            //'contacts' => (int) $ad->getContacts()
+        ];
+    }
+
+    public function transformAll()
+    {
+        $ads = $this->findAll();
+        $adsArray = [];
+
+        foreach ($ads as $ad) {
+            $adsArray[] = $this->transform($ad);
+        }
+
+        return $adsArray;
+    }
     /*
     public function findOneBySomeField($value): ?Ad
     {

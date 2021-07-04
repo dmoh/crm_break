@@ -25,7 +25,7 @@ class Contact
     private $email;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", nullable=true)
      */
     private $enabled;
 
@@ -211,5 +211,18 @@ class Contact
         }
 
         return $this;
+    }
+
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'name' => $this->getName(),
+            'description' => $this->getDescription(),
+            'additional_information' => $this->getAdditionalInformation(),
+            'phone_number' => $this->getPhoneNumber(),
+        ];
     }
 }

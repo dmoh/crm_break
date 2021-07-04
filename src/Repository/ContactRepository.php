@@ -47,4 +47,6 @@ class ContactRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    // public function findInEmail()
 }

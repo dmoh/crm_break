@@ -20,6 +20,11 @@ class User
     private $id;
 
     /**
+     * @ORM\Column(type="string", length=25, unique=true)
+     */
+    private $username;
+
+    /**
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $firstname;
@@ -63,6 +68,11 @@ class User
      * @ORM\OneToMany(targetEntity=Ad::class, mappedBy="user")
      */
     private $ads;
+
+    /**
+     * @ORM\OneToOne(targetEntity=Image::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $image;
 
     public function __construct()
     {
@@ -158,6 +168,22 @@ class User
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param mixed $username
+     */
+    public function setUsername($username): void
+    {
+        $this->username = $username;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -196,6 +222,35 @@ class User
             if ($ad->getUser() === $this) {
                 $ad->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'firstname' => $this->getFirstname(),
+            'lastname' => $this->getLastname(),
+            'email' => $this->getEmail(),
+            'phoneNumber' => $this->getPhoneNumber(),
+        ];
+    }
+
+    public function getImage(): ?Image
+    {
+        return $this->image;
+    }
+
+    public function setImage(?Image $image): self
+    {
+        $this->image = $image;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $image ? null : $this;
+        if ($image->getUser() !== $newUser) {
+            $image->setUser($newUser);
         }
 
         return $this;

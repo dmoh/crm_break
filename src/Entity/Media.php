@@ -32,6 +32,11 @@ class Media
      */
     private $type_media;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $hash_filename;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,18 @@ class Media
     public function setTypeMedia(?string $type_media): self
     {
         $this->type_media = $type_media;
+
+        return $this;
+    }
+
+    public function getHashFilename(): ?string
+    {
+        return $this->hash_filename;
+    }
+
+    public function setHashFilename(string $hash_filename): self
+    {
+        $this->hash_filename = $hash_filename;
 
         return $this;
     }
